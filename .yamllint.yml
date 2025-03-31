@@ -1,0 +1,59 @@
+
+---
+extends: "default"
+
+rules:
+  line-length:
+    max: 120
+    level: "warning"
+
+  trailing-spaces:
+    level: "error"
+
+  indentation:
+    level: "error"
+    spaces: 2
+
+  document-start:
+    level: "error"
+
+  braces:
+    level: "warning"
+    forbid: true
+
+  colons:
+    level: "error"
+
+  commas:
+    level: "warning"
+
+  comments:
+    level: "warning"
+    min-spaces-from-content: 1
+
+  empty-lines:
+    level: "warning"
+    max-start: 2
+    max-end: 1
+
+  hyphens:
+    level: "error"
+
+  key-duplicates: "enable"
+
+  new-line-at-end-of-file: "enable"
+
+  octal-values: "disable"
+
+  quoted-strings:
+    level: "warning"
+    required: true
+
+ignore: |
+  .venv/
+  vendor/
+  node_modules/
+  tmp*/
+  docs/*.yaml
+  *.log
+  .github/

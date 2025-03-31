@@ -1,0 +1,79 @@
+---
+name: "Ansible CI/CD"
+
+on:
+  push:
+    branches:
+      - "main"  # ou sua branch principal
+  pull_request:
+    branches:
+      - "main"
+
+jobs:
+  lint:
+    runs-on: self-hosted
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v3
+
+      - name: "Install dependencies"
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install ansible-lint yamllint
+
+      - name: "Run Ansible Lint"
+        run: ansible-lint .
+
+      - name: "Run Yamllint"
+        run: |
+          yamllint .
+
+  molecule:
+    needs: lint
+    runs-on: self-hosted
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v3
+
+      - name: "Set up Python 3.x"
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+
+      - name: "Install dependencies"
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install docker
+          python3 -m pip install molecule
+          python3 -m pip install ansible
+
+      - name: "Run Molecule tests"
+        run: molecule test
+
+  deploy:
+    needs: molecule  # Garante que o molecule seja aprovado antes da implantação
+    runs-on: self-hosted
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v3
+
+      - name: "Set up Python 3.x"
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+
+      - name: "Install Ansible"
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install ansible
+
+      - name: "Prepare SSH key"
+        run: |
+          mkdir -p ~/.ssh/
+          echo "${{ secrets.ANSIBLE_SSH_PRIVATE_KEY }}" | base64 --decode > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H "${{ secrets.ANSIBLE_HOST_1 }}" >> ~/.ssh/known_hosts
+          ssh-keyscan -H "${{ secrets.ANSIBLE_HOST_2 }}" >> ~/.ssh/known_hosts
+
+      - name: "Run Ansible Playbook"
+        run: ansible-playbook -i inventory.ini playbook.yml -b
