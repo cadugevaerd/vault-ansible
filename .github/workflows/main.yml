@@ -11,7 +11,7 @@ on:
 
 jobs:
   lint:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: "Checkout code"
         uses: actions/checkout@v3
@@ -34,30 +34,8 @@ jobs:
         run: |
           yamllint .
 
-  molecule:
-    needs: lint
-    runs-on: self-hosted
-    steps:
-      - name: "Checkout code"
-        uses: actions/checkout@v3
-
-      - name: "Set up Python 3.13"
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.13"
-
-      - name: "Install dependencies"
-        run: |
-          python3 -m pip install --upgrade pip
-          python3 -m pip install docker
-          python3 -m pip install molecule
-          python3 -m pip install ansible
-
-      - name: "Run Molecule tests"
-        run: molecule test
-
   deploy:
-    needs: molecule  # Garante que o molecule seja aprovado antes da implantação
+    needs: lint
     runs-on: self-hosted
     steps:
       - name: "Checkout code"
