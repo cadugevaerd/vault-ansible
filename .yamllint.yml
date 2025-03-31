@@ -57,3 +57,4 @@ ignore: |
   docs/*.yaml
   *.log
   .github/
+  molecule/

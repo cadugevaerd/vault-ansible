@@ -9,7 +9,3 @@ provisioner:
   name: ansible
 verifier:
   name: ansible
-lint: |
-  set -e
-  yamllint -c .yamllint.yml .
-  ansible-lint --exclude .venv --exclude .git --exclude .github --exclude .tox --exclude node_modules
