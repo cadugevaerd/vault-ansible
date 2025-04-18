@@ -1,0 +1,6 @@
+---
+- name: "Instalar e configurar Vault com Raft"
+  hosts: "vault_servers"
+  become: true
+  roles:
+    - "vault_unninstall"

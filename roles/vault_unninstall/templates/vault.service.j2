@@ -1,0 +1,14 @@
+[Unit]
+Description=Vault Server
+After=network.target
+
+[Service]
+User={{ vault_user }}
+Group={{ vault_group }}
+ExecStart={{ vault_install_path }}/vault server -config={{ vault_config_dir }}/vault.hcl
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

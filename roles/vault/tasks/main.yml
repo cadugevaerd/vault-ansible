@@ -78,7 +78,7 @@
 - name: "Salvar chaves geradas localmente (se inicializado agora)"
   ansible.builtin.copy:
     content: "{{ vault_init_output.stdout }}"
-    dest: "./vault-init.json"
+    dest: "vault-init-{{ ansible_host }}.json"
     mode: '0600'
   delegate_to: "localhost"
   become: false

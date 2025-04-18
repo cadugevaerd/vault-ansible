@@ -1,0 +1,41 @@
+---
+- name: "Parar e desabilitar serviço Vault"
+  ansible.builtin.systemd:
+    name: "vault"
+    state: "stopped"
+    enabled: false
+  failed_when: false
+
+- name: "Remover serviço systemd do Vault"
+  ansible.builtin.file:
+    path: "/etc/systemd/system/vault.service"
+    state: "absent"
+
+- name: "Recarregar systemd"
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: "Remover diretórios Vault"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: "absent"
+  loop:
+    - "{{ vault_config_dir }}"
+    - "{{ vault_data_dir }}"
+    - "{{ vault_install_path }}/vault"
+
+- name: "Remover usuário vault"
+  ansible.builtin.user:
+    name: "{{ vault_user }}"
+    state: "absent"
+    remove: true
+
+- name: "Remover grupo vault"
+  ansible.builtin.group:
+    name: "{{ vault_group }}"
+    state: "absent"
+
+- name: "Remover arquivos temporários"
+  ansible.builtin.file:
+    path: "/tmp/vault_{{ vault_version }}.zip"
+    state: "absent"
