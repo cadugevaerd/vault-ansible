@@ -36,7 +36,7 @@ jobs:
 
   deploy:
     needs: lint
-    runs-on: runner-docker # runner local sem acessos externos
+    runs-on: self-hosted # runner local sem acessos externos
     steps:
       - name: "Checkout code"
         uses: actions/checkout@v3
